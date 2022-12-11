@@ -11,53 +11,75 @@ datasource db {
 }
 
 model Company {
-  id       Int      @id @default(autoincrement())
+  id       String     @id @default(uuid())
   name     String
   address  String
-  listRole String[]
-  createAt DateTime
-  updateAt DateTime
-  User     User[]
-  Role     Role[] // should use role model
+  createAt DateTime   @default(now())
+  updateAt DateTime   @default(now())
+  users    User[]
+  roles    Role[]
+  docs     Document[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  username String
-  password String
-  company   Company  @relation(fields: [companyId], references: [id])
-  companyId Int
-  role      Int[] // should use role model
-  createAt  DateTime
-  updateAt  DateTime
+  id          String        @id @default(uuid())
+  email       String        @unique
+  name        String?
+  username    String
+  password    String
+  company     Company       @relation(fields: [companyId], references: [id])
+  companyId   String
+  createAt    DateTime      @default(now())
+  updateAt    DateTime      @default(now())
+  UserOnRoles UserOnRoles[]
 }
 
 model Document {
-  id       Int      @id @default(autoincrement())
-  name     String?
-  createAt DateTime
-  updateAt DateTime
-  role     Int[]
-  file     File[]
+  id        String   @id @default(uuid())
+  name      String?
+  createAt  DateTime @default(now())
+  updateAt  DateTime @default(now())
+  file      File[]
+  company   Company  @relation(fields: [companyId], references: [id])
+  companyId String
+  DocOnRoles DocOnRoles[]
 }
 
 model File {
-  id    Int      @id @default(autoincrement())
-  name  String?
-  doc   Document @relation(fields: [docId], references: [id])
-  docId Int
+  id       String   @id @default(uuid())
+  name     String?
+  doc      Document @relation(fields: [docId], references: [id])
+  docId    String
+  value    String
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now())
+}
+
+model UserOnRoles {
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@id([roleId, userId])
+}
+
+model DocOnRoles {
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+  doc   Document   @relation(fields: [docId], references: [id])
+  docId String
+
+  @@id([roleId, docId])
 }
 
 model Role {
-  id         Int       @id @default(autoincrement())
-  name       String
-  company    Company   @relation(fields: [companyId], references: [id])
-  companyId  Int
-}
-
-model Test{
-    id         Int       @id @default(autoincrement())
-name String 
+  id          String        @id @default(uuid())
+  name        String
+  company     Company       @relation(fields: [companyId], references: [id])
+  companyId   String
+  createAt    DateTime      @default(now())
+  updateAt    DateTime      @default(now())
+  UserOnRoles UserOnRoles[]
+  DocOnRoles DocOnRoles[]
 }
