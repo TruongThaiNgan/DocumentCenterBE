@@ -48,4 +48,17 @@ export class UserService extends PrismaClient {
       return error;
     }
   }
+
+  async getUsersByCompanyId(id: string): Promise<Array<User>> {
+    try {
+      const result = await this.user.findMany({
+        where: {
+          companyId: id,
+        },
+      });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  }
 }

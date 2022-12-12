@@ -7,7 +7,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Get(':id')
-  async getFile(@Param() params): Promise<Array<RoleByCompanyIdDto>> {
+  async getRole(@Param() params): Promise<Array<RoleByCompanyIdDto>> {
     return this.roleService.getRoleByCompanyId(params.id);
   }
 }
