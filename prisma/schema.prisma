@@ -10,76 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Company {
-  id       String     @id @default(uuid())
-  name     String
-  address  String
-  createAt DateTime   @default(now())
-  updateAt DateTime   @default(now())
-  users    User[]
-  roles    Role[]
-  docs     Document[]
-}
-
 model User {
   id          String        @id @default(uuid())
-  email       String        @unique
-  name        String?
+  name        String
   username    String
   password    String
-  company     Company       @relation(fields: [companyId], references: [id])
-  companyId   String
   createAt    DateTime      @default(now())
   updateAt    DateTime      @default(now())
-  UserOnRoles UserOnRoles[]
+  file      File[]
+  signature Signature[]
 }
 
-model Document {
+model File {
   id        String   @id @default(uuid())
   name      String?
   createAt  DateTime @default(now())
   updateAt  DateTime @default(now())
-  file      File[]
-  company   Company  @relation(fields: [companyId], references: [id])
-  companyId String
-  DocOnRoles DocOnRoles[]
+  user User @relation(fields: [createdBy], references: [id])
+  createdBy String
+  signature Signature[]
 }
 
-model File {
-  id       String   @id @default(uuid())
-  name     String?
-  doc      Document @relation(fields: [docId], references: [id])
-  docId    String
-  value    String
-  createAt DateTime @default(now())
-  updateAt DateTime @default(now())
+model Signature {
+      id        String   @id @default(uuid())
+    user User @relation(fields: [createdBy], references: [id])
+    createdBy String
+    publicKey String
+    privateKey String
+    file File @relation(fields: [fileId], references: [id])
+    fileId String
+    role Role
 }
 
-model UserOnRoles {
-  role   Role   @relation(fields: [roleId], references: [id])
-  roleId String
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  @@id([roleId, userId])
-}
-
-model DocOnRoles {
-  role   Role   @relation(fields: [roleId], references: [id])
-  roleId String
-  doc   Document   @relation(fields: [docId], references: [id])
-  docId String
-
-  @@id([roleId, docId])
-}
-
-model Role {
-  id          String        @id @default(uuid())
-  name        String
-  company     Company       @relation(fields: [companyId], references: [id])
-  companyId   String
-  createAt    DateTime      @default(now())
-  updateAt    DateTime      @default(now())
-  UserOnRoles UserOnRoles[]
-  DocOnRoles DocOnRoles[]
+enum Role {
+  VIEW
+  VIEW_AND_EDIT
+  DOWNLOAD
 }

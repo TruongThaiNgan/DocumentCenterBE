@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
 
 export class AuthSignInDto {
   @ApiProperty()
@@ -12,17 +11,20 @@ export class UserDto {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  email: string;
+  name: string;
+  @ApiProperty()
+  username: string;
+  @ApiProperty()
+  password: string;
+}
+
+export class UpdateUserDto {
   @ApiProperty()
   name: string;
   @ApiProperty()
   username: string;
   @ApiProperty()
   password: string;
-  @ApiProperty()
-  companyId: string;
-  @ApiProperty()
-  role: Role;
 }
 
 export type UserLoginDto = {
