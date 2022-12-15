@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaClient, User } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateUserDto, UserDto } from './users.dto';
@@ -13,11 +13,22 @@ export class UsersService extends PrismaClient {
     });
   }
 
-  async createUser(data: UserDto): Promise<User> {
+  async createUser(data: UpdateUserDto): Promise<User> {
     try {
+      const count = await this.user.count({
+        where: {
+          username: data.username,
+        },
+      });
+
+      if (count > 0) {
+        throw BadRequestException;
+      }
+
       const result = await this.user.create({
         data: data,
       });
+
       return result;
     } catch (error) {
       return error;

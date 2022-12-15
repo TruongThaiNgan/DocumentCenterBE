@@ -29,6 +29,7 @@ model File {
   user User @relation(fields: [createdBy], references: [id])
   createdBy String
   signature Signature[]
+  value String
 }
 
 model Signature {
